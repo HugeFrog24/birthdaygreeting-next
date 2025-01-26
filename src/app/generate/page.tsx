@@ -53,15 +53,32 @@ export default function GeneratePage() {
         });
 
         // Wait a bit for styles to settle
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Capture the iframe content
-        const canvas = await html2canvas(iframe.contentDocument!.body, {
+        // Find the main content container
+        const contentElement = iframe.contentDocument!.querySelector('[data-capture-mode="true"]');
+        if (!contentElement) throw new Error('Content element not found');
+
+        const canvas = await html2canvas(contentElement as HTMLElement, {
           useCORS: true,
-          scale: 2,
+          scale: 2, // Higher quality
           logging: false,
-          removeContainer: true,
-          backgroundColor: null
+          backgroundColor: null, // Let the gradient show through
+          allowTaint: true,
+          width: 1600,
+          height: 900,
+          onclone: (clonedDoc) => {
+            const element = clonedDoc.querySelector('[data-capture-mode]') as HTMLElement;
+            if (element) {
+              element.style.width = '1600px';
+              element.style.height = '900px';
+              element.style.position = 'fixed';
+              element.style.top = '0';
+              element.style.left = '0';
+              element.style.transform = 'none';
+              element.style.overflow = 'hidden';
+            }
+          }
         });
 
         // Create and trigger download
@@ -73,8 +90,8 @@ export default function GeneratePage() {
 
         // Clean up
         document.body.removeChild(iframe);
-      } catch (error) {
-        console.error('Error capturing screenshot:', error);
+      } catch {
+        console.error('Error capturing screenshot');
       }
     }
   };
@@ -223,7 +240,6 @@ export default function GeneratePage() {
                           text: 'Check out this birthday greeting!'
                         });
                       } catch {
-                        // Fallback for browsers that don't support Web Share API or when sharing fails
                         window.open(generatedUrl, '_blank');
                       }
                     }}

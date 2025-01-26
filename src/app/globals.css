@@ -156,16 +156,12 @@ body > * {
   animation: none !important;
   transform: none !important;
   transition: none !important;
-}
-
-[data-capture-mode="true"] body {
-  background: linear-gradient(-45deg, #FF69B4, #FFD700) !important;
-  animation: none !important;
-}
-
-[data-capture-mode="true"] body::before,
-[data-capture-mode="true"] body::after {
-  display: none !important;
+  background: linear-gradient(-45deg, #FF69B4, #FFB6C1, #FFC0CB, #FFD700) !important;
+  background-size: 200% 200% !important;
+  background-position: 0% 50% !important;
+  padding: 2rem !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 
 [data-capture-mode="true"] .birthday-gradient {
