@@ -150,3 +150,33 @@ body > * {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   filter: brightness(1.2) contrast(1.1);
 }
+
+/* Capture-specific styles */
+[data-capture-mode="true"] {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+[data-capture-mode="true"] body {
+  background: linear-gradient(-45deg, #FF69B4, #FFD700) !important;
+  animation: none !important;
+}
+
+[data-capture-mode="true"] body::before,
+[data-capture-mode="true"] body::after {
+  display: none !important;
+}
+
+[data-capture-mode="true"] .birthday-gradient {
+  background: #FF1493 !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  text-shadow: none !important;
+  filter: none !important;
+  color: #FF1493 !important;
+}
+
+[data-capture-mode="true"] .aqua-card {
+  @apply bg-white/90 shadow-md rounded-lg;
+}

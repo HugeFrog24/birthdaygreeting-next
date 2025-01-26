@@ -14,7 +14,7 @@ export async function getGreeting(
   const formality = options.formality || 'informal';
 
   // Always use default name if none provided or empty
-  const recipientName = !name || !name.trim()
+  const recipientName = typeof name !== 'string' || !name.trim()
     ? defaultNames[language][formality]
     : name.trim();
 
@@ -28,6 +28,6 @@ export async function getGreeting(
   
   return {
     greeting,
-    isGeneric: !name || !name.trim()
+    isGeneric: typeof name !== 'string' || !name.trim()
   };
 }

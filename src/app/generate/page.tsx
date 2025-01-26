@@ -35,26 +35,46 @@ export default function GeneratePage() {
 
   const captureAndDownload = async () => {
     if (generatedUrl) {
-      // Open the URL in a new window and wait for it to load
-      const win = window.open(generatedUrl, '_blank');
-      if (win) {
-        win.addEventListener('load', async () => {
-          try {
-            const canvas = await html2canvas(win.document.body);
-            const image = canvas.toDataURL('image/png');
-            
-            // Create download link
-            const link = document.createElement('a');
-            link.download = 'birthday-greeting.png';
-            link.href = image;
-            link.click();
-            
-            // Close the temporary window
-            win.close();
-          } catch (error) {
-            console.error('Error capturing screenshot:', error);
-          }
+      try {
+        // Create a hidden iframe to load the page
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.left = '-9999px';
+        iframe.style.top = '-9999px';
+        document.body.appendChild(iframe);
+
+        // Load the page with capture mode in the URL
+        const captureUrl = `${generatedUrl}${generatedUrl.includes('?') ? '&' : '?'}forCapture=true`;
+        iframe.src = captureUrl;
+
+        // Wait for the iframe to load
+        await new Promise((resolve) => {
+          iframe.onload = resolve;
         });
+
+        // Wait a bit for styles to settle
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Capture the iframe content
+        const canvas = await html2canvas(iframe.contentDocument!.body, {
+          useCORS: true,
+          scale: 2,
+          logging: false,
+          removeContainer: true,
+          backgroundColor: null
+        });
+
+        // Create and trigger download
+        const image = canvas.toDataURL('image/png', 1.0);
+        const link = document.createElement('a');
+        link.download = 'birthday-greeting.png';
+        link.href = image;
+        link.click();
+
+        // Clean up
+        document.body.removeChild(iframe);
+      } catch (error) {
+        console.error('Error capturing screenshot:', error);
       }
     }
   };
@@ -202,8 +222,8 @@ export default function GeneratePage() {
                           title: 'Birthday Greeting',
                           text: 'Check out this birthday greeting!'
                         });
-                      } catch (error) {
-                        // Fallback for browsers that don't support Web Share API
+                      } catch {
+                        // Fallback for browsers that don't support Web Share API or when sharing fails
                         window.open(generatedUrl, '_blank');
                       }
                     }}
