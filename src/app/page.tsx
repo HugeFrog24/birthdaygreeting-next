@@ -14,9 +14,6 @@ function BirthdayMessage({ config, forCapture = false }: { config: GreetingConfi
   const baseContainerClass = `text-center ${directionClass} mx-auto`;
   const containerClass = `${baseContainerClass}${forCapture ? '' : ' animate-fade-in'}`;
 
-  const messageClass = forCapture ? '' : 'animate-float';
-  const messageSpacing = forCapture ? 'space-y-8' : 'space-y-6';
-
   const cardContainerClass = forCapture
     ? 'flex flex-row justify-center items-stretch gap-12 mt-8'
     : 'flex flex-col md:flex-row justify-center items-stretch gap-4 md:gap-8 flex-wrap mt-8';
