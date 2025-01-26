@@ -12,40 +12,32 @@ async function getBaseUrl() {
   return `${protocol}://${host}`;
 }
 
-type Props = {
-  children: React.ReactNode;
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-export async function generateMetadata(
-  { searchParams }: Props
-): Promise<Metadata> {
-  const to = searchParams?.to as string;
-
+// For root layout, we don't need params since there are no dynamic segments
+export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = await getBaseUrl();
   return {
     metadataBase: new URL(baseUrl),
-    title: to ? `Birthday Greetings for ${to}` : "Birthday Greetings",
+    title: "Birthday Greetings",
     description: "Send personalized birthday wishes to your loved ones",
     openGraph: {
-      title: to ? `Birthday Greetings for ${to}` : "Birthday Greetings",
+      title: "Birthday Greetings",
       description: "Send personalized birthday wishes to your loved ones",
       images: [{
-        url: to ? `/api/og?to=${encodeURIComponent(to)}` : '/api/og',
+        url: '/api/og',
         width: 1200,
         height: 630,
       }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: to ? `Birthday Greetings for ${to}` : "Birthday Greetings",
+      title: "Birthday Greetings",
       description: "Send personalized birthday wishes to your loved ones",
-      images: [to ? `/api/og?to=${encodeURIComponent(to)}` : '/api/og'],
+      images: ['/api/og'],
     },
   };
 }
 
+// Keep the layout component simple with only the props it needs
 export default function RootLayout({
   children,
 }: {

@@ -139,6 +139,10 @@ body > * {
   animation: fadeIn 1s ease-out forwards;
 }
 
+.aqua-card {
+  @apply bg-white/60 backdrop-blur-sm shadow-lg rounded-lg;
+}
+
 .birthday-gradient {
   background: linear-gradient(135deg, #8B008B, #FF1493);
   -webkit-background-clip: text;

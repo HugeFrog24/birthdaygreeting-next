@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ClipboardDocumentIcon, ShareIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { ClipboardDocumentIcon, ShareIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Language, Formality } from '../../utils/greetingGenerator';
 
 interface FormData {
@@ -33,6 +34,15 @@ export default function GeneratePage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div className="mb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Go back
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold mb-8 text-center">Birthday Greeting Generator</h1>
       
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -107,8 +117,12 @@ export default function GeneratePage() {
         </button>
       </form>
 
-      {generatedUrl && (
-        <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+      <div className={`mt-8 transition-all duration-500 ease-in-out transform origin-top ${
+        generatedUrl
+          ? 'opacity-100 scale-y-100 h-auto'
+          : 'opacity-0 scale-y-0 h-0 overflow-hidden'
+      }`}>
+        <div className="p-4 aqua-card">
           <h2 className="text-lg font-medium text-gray-900 mb-2">Generated URL:</h2>
           <div className="flex flex-wrap gap-2">
             <input
@@ -155,7 +169,7 @@ export default function GeneratePage() {
             </a>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

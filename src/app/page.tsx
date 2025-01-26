@@ -29,7 +29,7 @@ function BirthdayMessage({ config }: { config: GreetingConfig }) {
             {config.wishes.map((wish, index) => (
               <div
                 key={index}
-                className="bg-white/60 backdrop-blur-sm p-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 w-full md:w-1/4 min-w-[250px]"
+                className="aqua-card p-6 transform hover:scale-105 transition-transform duration-300 w-full md:w-1/4 min-w-[250px]"
               >
                 <span className="text-3xl">{wish.emoji}</span>
                 <p className="text-gray-700 mt-2 break-words">{wish.text}</p>
@@ -61,7 +61,7 @@ export default async function Home({ searchParams }: PageProps) {
     : undefined;
     
   const validStyles = ['formal', 'informal', 'parent.mama', 'parent.papa', 'intimate'] as const;
-  const formality = typeof params.style === 'string' && validStyles.includes(params.style as any)
+  const formality = typeof params.style === 'string' && validStyles.includes(params.style as typeof validStyles[number])
     ? params.style as typeof validStyles[number]
     : 'informal';
   
@@ -71,29 +71,31 @@ export default async function Home({ searchParams }: PageProps) {
   const { greeting } = await getGreeting(recipientId, { language, formality, signatureName });
 
   return (
-    <div className="container mx-auto px-4 pt-16">
+    <div className="container mx-auto px-4 pt-16 min-h-screen flex flex-col">
       <Suspense fallback={<div>Loading...</div>}>
         <BirthdayMessage config={greeting} />
       </Suspense>
-      <div className="text-center mt-12">
-        <a
-          href="/generate"
-          className="text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          Create your own greeting →
-        </a>
-        <div className="mt-4">
+      <div className="flex-grow">
+        <div className="text-center mt-12">
           <a
-            href="https://github.com/HugeFrog24/birthdaygreeting-next"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+            href="/generate"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
-            Birthday greeting generator
-            <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+            Create your own greeting →
           </a>
         </div>
       </div>
+      <footer className="text-center py-6 mt-auto border-t border-gray-200/20">
+        <a
+          href="https://github.com/HugeFrog24/birthdaygreeting-next"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+        >
+          Birthday Greeting Generator
+          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+        </a>
+      </footer>
     </div>
   );
 }
