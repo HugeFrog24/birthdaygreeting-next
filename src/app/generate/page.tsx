@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ClipboardDocumentIcon, ShareIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ClipboardDocumentIcon, ShareIcon, ArrowLeftIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { Language, Formality } from '../../utils/greetingGenerator';
+import html2canvas from 'html2canvas';
 
 interface FormData {
   name: string;
@@ -30,6 +31,32 @@ export default function GeneratePage() {
 
     const url = `${window.location.origin}/?${params.toString()}`;
     setGeneratedUrl(url);
+  };
+
+  const captureAndDownload = async () => {
+    if (generatedUrl) {
+      // Open the URL in a new window and wait for it to load
+      const win = window.open(generatedUrl, '_blank');
+      if (win) {
+        win.addEventListener('load', async () => {
+          try {
+            const canvas = await html2canvas(win.document.body);
+            const image = canvas.toDataURL('image/png');
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = 'birthday-greeting.png';
+            link.href = image;
+            link.click();
+            
+            // Close the temporary window
+            win.close();
+          } catch (error) {
+            console.error('Error capturing screenshot:', error);
+          }
+        });
+      }
+    }
   };
 
   return (
@@ -129,44 +156,83 @@ export default function GeneratePage() {
               type="text"
               readOnly
               value={generatedUrl}
-              className="flex-1 min-w-0 px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none"
+              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none"
             />
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(generatedUrl);
-              }}
-              className="p-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              title="Copy to clipboard"
-            >
-              <ClipboardDocumentIcon className="w-5 h-5" />
-            </button>
-            <button
-              onClick={async () => {
-                try {
-                  await navigator.share({
-                    url: generatedUrl,
-                    title: 'Birthday Greeting',
-                    text: 'Check out this birthday greeting!'
-                  });
-                } catch (error) {
-                  console.error('Error sharing:', error);
-                }
-              }}
-              className="p-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              title="Share"
-            >
-              <ShareIcon className="w-5 h-5" />
-            </button>
           </div>
+
           <div className="mt-4">
             <a
               href={generatedUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-600"
+              className="inline-flex items-center text-blue-500 hover:text-blue-600"
             >
-              Open greeting in new tab →
+              Open greeting in new tab <span className="ml-1">→</span>
             </a>
+          </div>
+
+          <div className="mt-6">
+            <div className="mb-3">
+              <span className="text-sm font-medium text-gray-700">Share your greeting:</span>
+            </div>
+            
+            <div className="space-y-3">
+              {/* URL Section */}
+              <div className="flex items-center justify-between p-3 rounded border-2 border-gray-400">
+                <div>
+                  <span className="block text-sm font-medium text-gray-700">Share URL</span>
+                  <span className="text-sm text-gray-500 break-all">{generatedUrl}</span>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(generatedUrl)}
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                    title="Copy URL"
+                  >
+                    <ClipboardDocumentIcon className="h-5 w-5" />
+                    <span className="text-sm">Copy</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await navigator.share({
+                          url: generatedUrl,
+                          title: 'Birthday Greeting',
+                          text: 'Check out this birthday greeting!'
+                        });
+                      } catch (error) {
+                        // Fallback for browsers that don't support Web Share API
+                        window.open(generatedUrl, '_blank');
+                      }
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                    title="Share URL"
+                  >
+                    <ShareIcon className="h-5 w-5" />
+                    <span className="text-sm">Share</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Image Sharing Option */}
+              <div className="flex items-center justify-between p-3 rounded border-2 border-gray-400">
+                <div>
+                  <span className="block text-sm font-medium text-gray-700">Share as Image</span>
+                  <span className="text-sm text-gray-500">Download the greeting as a picture</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={captureAndDownload}
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                  title="Download as Image"
+                >
+                  <ArrowDownTrayIcon className="h-5 w-5" />
+                  <span className="text-sm">Download Image</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
