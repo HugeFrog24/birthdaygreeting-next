@@ -1,5 +1,6 @@
 services:
   web:
+    image: bogerserge/birthdaygreeting:latest
     build:
       context: .
       dockerfile: Dockerfile
