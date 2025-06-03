@@ -3,6 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
     ports:
       - "3000:3000"
     environment:
@@ -10,6 +13,8 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
     # Enable container to handle graceful shutdown
     stop_signal: SIGINT
+    # Ensure container restarts automatically after system reboot
+    restart: unless-stopped
     # Healthcheck to ensure service is running properly
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:3000"]
@@ -17,11 +22,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3

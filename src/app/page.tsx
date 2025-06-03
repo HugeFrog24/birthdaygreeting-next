@@ -7,38 +7,49 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-function BirthdayMessage({ config }: { config: GreetingConfig }) {
+function BirthdayMessage({ config, forCapture = false }: { config: GreetingConfig; forCapture?: boolean }) {
   const directionClass = config.language === 'ar' ? 'rtl' : 'ltr';
 
+  // Use simpler styles when capturing
+  const baseContainerClass = `text-center ${directionClass} mx-auto`;
+  const containerClass = `${baseContainerClass}${forCapture ? '' : ' animate-fade-in'}`;
+
+  const cardContainerClass = forCapture
+    ? 'flex flex-row justify-center items-stretch gap-12 mt-8'
+    : 'flex flex-col md:flex-row justify-center items-stretch gap-4 md:gap-8 flex-wrap mt-8';
+
+  const baseCardClass = forCapture
+    ? 'aqua-card p-8 w-[350px]'
+    : 'aqua-card p-4 w-full md:w-1/4 min-w-[200px]';
+
   return (
-    <div className={`animate-fade-in space-y-6 text-center ${directionClass} max-w-4xl mx-auto`}>
-      <div className="space-y-4">
-        <div className="text-6xl md:text-7xl lg:text-8xl">
-          {config.greetingIcon}
+    <div className={containerClass}>
+      <div className="space-y-12">
+        <div className="space-y-6">
+          <div className="text-6xl">
+            {config.greetingIcon}
+          </div>
+          <h1 className={`font-bold px-4${forCapture ? ' text-7xl' : ' text-4xl md:text-6xl lg:text-7xl birthday-gradient break-words'}`}>
+            {config.greetingText}
+          </h1>
+          <p className="text-2xl text-gray-700">
+            {config.message}
+          </p>
         </div>
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold birthday-gradient break-words px-4">
-          {config.greetingText}
-        </h1>
-      </div>
-      <div className="animate-float">
-        <p className="text-xl md:text-2xl text-gray-700 mb-6">
-          {config.message}
-        </p>
-        <div className="space-y-4">
-          <div className="flex flex-col md:flex-row justify-center items-stretch gap-4 md:gap-8 flex-wrap">
-            {config.wishes.map((wish, index) => (
-              <div
-                key={index}
-                className="aqua-card p-6 transform hover:scale-105 transition-transform duration-300 w-full md:w-1/4 min-w-[250px]"
-              >
-                <span className="text-3xl">{wish.emoji}</span>
-                <p className="text-gray-700 mt-2 break-words">{wish.text}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 text-xl md:text-2xl text-gray-700 whitespace-pre-line">
-            {config.signature}
-          </div>
+
+        <div className={cardContainerClass}>
+          {config.wishes.map((wish, index) => (
+            <div
+              key={index}
+              className={baseCardClass}
+            >
+              <span className="text-4xl">{wish.emoji}</span>
+              <p className="text-xl text-gray-700 mt-4">{wish.text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 text-2xl text-gray-700 whitespace-pre-line">
+          {config.signature}
         </div>
       </div>
     </div>
@@ -70,32 +81,44 @@ export default async function Home({ searchParams }: PageProps) {
     : undefined;
   const { greeting } = await getGreeting(recipientId, { language, formality, signatureName });
 
+  const isForCapture = params.forCapture === 'true';
+  const containerClass = isForCapture
+    ? "w-[1600px] h-[900px] mx-auto p-16 bg-gradient-to-br from-pink-400 via-pink-200 to-yellow-300 rounded-lg flex flex-col justify-between"
+    : "container mx-auto px-4 pt-16 min-h-screen flex flex-col";
+
   return (
-    <div className="container mx-auto px-4 pt-16 min-h-screen flex flex-col">
+    <div 
+      className={containerClass}
+      data-capture-mode={isForCapture || undefined}
+    >
       <Suspense fallback={<div>Loading...</div>}>
-        <BirthdayMessage config={greeting} />
+        <BirthdayMessage config={greeting} forCapture={isForCapture} />
       </Suspense>
-      <div className="flex-grow">
-        <div className="text-center mt-12">
-          <a
-            href="/generate"
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            Create your own greeting →
-          </a>
-        </div>
-      </div>
-      <footer className="text-center py-6 mt-auto border-t border-gray-200/20">
-        <a
-          href="https://github.com/HugeFrog24/birthdaygreeting-next"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          Birthday Greeting Generator
-          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
-        </a>
-      </footer>
+      {!isForCapture && (
+        <>
+          <div className="flex-grow">
+            <div className="text-center mt-12">
+              <a
+                href="/generate"
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Create your own greeting →
+              </a>
+            </div>
+          </div>
+          <footer className="text-center py-6 mt-auto border-t border-gray-200/20">
+            <a
+              href="https://github.com/HugeFrog24/birthdaygreeting-next"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              Birthday Greeting Generator
+              <ArrowTopRightOnSquareIcon className="h-4 w-4" />
+            </a>
+          </footer>
+        </>
+      )}
     </div>
   );
 }
