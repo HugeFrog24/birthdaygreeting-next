@@ -1,5 +1,6 @@
+# Multi-platform build support (amd64, arm64)
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine AS runner
+FROM node:slim AS runner
 
 # Set to production
 ENV NODE_ENV=production
