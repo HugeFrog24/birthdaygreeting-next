@@ -1,21 +1,190 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "../../tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --primary: #ff69b4;
+  --secondary: #ffd700;
+  --accent: #87ceeb;
+  --background: #fff5f8;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(
+    -45deg,
+    #ff69b4,
+    #ffb6c1,
+    #ffc0cb,
+    #ffd700,
+    #ffa07a,
+    #ff8c69
+  );
+  background-size: 200% 200%;
+  animation: gradientFlow 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1) 0px,
+      rgba(255, 255, 255, 0.1) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.2) 0%,
+      transparent 60%
+    );
+  background-size:
+    50px 50px,
+    100% 100%;
+  pointer-events: none;
+  z-index: 1;
+  will-change: opacity;
+  opacity: 0.6;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 2;
+  will-change: opacity;
+}
+
+body > * {
+  position: relative;
+  z-index: 2;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.aqua-card {
+  @apply bg-white/60 backdrop-blur-sm shadow-lg rounded-lg;
+}
+
+.birthday-gradient {
+  background: linear-gradient(135deg, #8b008b, #ff1493);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.2) contrast(1.1);
+}
+
+/* Capture-specific styles */
+[data-capture-mode="true"] {
+  animation: none !important;
+  transform: none !important;
+  transition: none !important;
+  background: linear-gradient(
+    -45deg,
+    #ff69b4,
+    #ffb6c1,
+    #ffc0cb,
+    #ffd700
+  ) !important;
+  background-size: 200% 200% !important;
+  background-position: 0% 50% !important;
+  padding: 2rem !important;
+  border-radius: 1rem !important;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-capture-mode="true"] .birthday-gradient {
+  background: #ff1493 !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: initial !important;
+  text-shadow: none !important;
+  filter: none !important;
+  color: #ff1493 !important;
+}
+
+[data-capture-mode="true"] .aqua-card {
+  @apply bg-white/90 shadow-md rounded-lg;
 }
