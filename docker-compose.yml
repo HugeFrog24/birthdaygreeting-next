@@ -1,0 +1,25 @@
+services:
+  web:
+    image: bogerserge/birthdaygreeting:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    # Enable container to handle graceful shutdown
+    stop_signal: SIGINT
+    # Ensure container restarts automatically after system reboot
+    restart: unless-stopped
+    # Healthcheck to ensure service is running properly
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
