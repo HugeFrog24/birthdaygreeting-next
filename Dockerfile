@@ -7,8 +7,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json pnpm-lock.yaml ./
 
-# Install pnpm globally and install dependencies
-RUN npm install -g pnpm && pnpm install --frozen-lockfile
+# Install the exact pnpm version pinned in package.json's "packageManager"
+# field (node:slim no longer bundles corepack), instead of the latest pnpm.
+RUN npm install -g pnpm@10.33.2 && pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
